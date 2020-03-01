@@ -14,115 +14,235 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
-IMPORTANT: You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
+# Mekansal verilerin okunması ve yazılması
+
+## Vektör dosyaları
+
+Vektör dosyaları genellikle `shp`(Shapefile), `json`, `geojson` uzantılı dosyalar biçiminde bulunmaktadır. Diğer bir çok dosya biçimine ile ilgili bilgili [wikipedia](https://en.0wikipedia.org/wiki/GIS_file_formats) içeriğinden öğrenilebilir. Ancak biz mevcut çalışmamızda genelikle `shp` vs `json` uzantılı dosyaları kullanacağız.
 
 
-This is an .Rmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
+Başlangıç aşamasında `shp` vs `json` verileriyle ilgili olarak önemli bir ayrıntıyı belirtmekte fayda bulunmaktadır.
 
-# My first post
-
-2018 | 7 | 23 Last compiled: `r Sys.Date()`
-
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
-
-## Second level header
-
-You can add more headers by adding more hashtags. These won't be put into the table of contents
-
-### third level header
-
-Here's an even lower level header
-
-# My second post (note the order)
-
-2018 | 7 | 23 Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the sam place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation =1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
+- Shapefile (`shp`) verileri zorunlu olarak beraberinde `.shx` `.dbf` türündeki verileri gerektirmektedir. `.shp` verileri yalnızca geometrik bilgileri saklarken bu veriler indeksler ve diğer sütunsal verilerin saklanmasını sağlamaktadır. Shapefile verileri indirildiğinde genellikle bu uzantılı veri dosyaları da beraberinde gelmektedir. O sebeple bu dosyaların silinmemesi, Shapefile dosyaları ie aktarma işlemleri yapılırken bu dosyaların isimleri değiştilmeden `.shp` uzantılı dosya ile aynı çalışma dizininde bulunması gerekmektedir.
+- `json` ve `geojson` verileri ise Shapefile dosyalarınad farklı olarak yukarıda sayılan tüm bağımlılık gerektiren bilgileri text formatında kendi içinde saklamaktadır. Bu sebeple yalnızca tek dosya ile tüm bilgiler kontrol edilebilmektedir.
 
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
-```
+library(sf)
+library(tidyverse)
 
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag), from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You learn all of these things and more can be customized in each R code block.
-
-# The big idea
-
-Use this lab journal to record what you do in R. This way I will be able to see what you are doing and help you along the way. You will also be creating a repository of all the things you do. You can make posts about everything. Learning specific things in R (project unrelated), and doing things for the project that we will discuss at the beginning of the Fall semester. You can get started now by fiddling around with googling things, and trying stuff out in R. I've placed some helpful starting links in the links page on this website
-
-# What can you do right now by yourself?
-
-It's hard to learn programming when you don't have specific problems that you are trying to solve. Everything just seems abstract.
-
-I wrote an [introductory programming book that introduces R](https://crumplab.github.io/programmingforpsych/), and gives some [concrete problems for you to solve](https://crumplab.github.io/programmingforpsych/programming-challenges-i-learning-the-fundamentals.html). 
-
-To get the hang of journaling and solving the problems to learn programming, my suggestion is that you use this .Rmd file to solve the problems. It would look like this:
-
-# Problem 1
-
-Do simple math with numbers, addition, subtraction, multiplication, division
-
-```{r}
-1+2
-2*5
-5/3
-(1+6+4)/5
+nc <- st_read(system.file("shape/nc.shp", package="sf"))
 
 ```
 
-# Problem 2
-
-Put numbers into variables, do simple math on the variables
+```{r}
+class(nc)
+```
 
 ```{r}
-a<-1
-b<-2
-a+b
+attr(nc, "sf_column")
+print(nc[9:15], n = 3)
+```
 
-d<-c(1,2,3)
-e<-c(5,6,7)
-d+e
-d*e
-d/e
+```{r}
+str(nc)
+```
+
+En basit haliyle `nc` dataframe'indeki `geometry` kolonuna `plot` fonksiyonu uygulandığında haritanın geometrisine ulaşabiliriz. Bu örneğimizde `geometry` alanı MULTIPOLYGON karakteristiğinde olduğu için karşımıza boş bir poligon harita çıktı. Eğer `geometry` alanı ilerdeki örneklerde sıkça göreceğimiz gibi MULTIPOLYGON karakteristiğinde olsaydı `plot` fonksiyonu uygulandıktan sonra karşımıza boş bir düzlemde dağılmış noktalar görecektik.
+
+
+
+```{r}
+plot(nc$geometry)
+```
+
+
+
+## Raster dosyaları
+
+Bu çalışmanın ana odağı raster odağı olmamak ile birlikte kısa bir gösterim yapabiliriz.
+
+Daha uygun bir boyutta raster dosyası bulunabilir
+
+
+# Mekansal Katman Birleştirme
+
+Gerçek hayattaki uygulamalarımızda genellikle mekana ilişkin verilerimiz `xlsx`, `csv` gibi dosyalarda veya veritabalarında iken mekansal geometrik veriler genellikle `shp`, `json`, ``geojson` gibi dosyalarda bulunmaktadır. Katman birleştirme (Spatial join) işlemi ile birlikte genellikle bu iki verinin birbiri ile eşleştirilmesini sağlarız.
+
+Örnek olarak aşağıdaki veri setinden gidelim.
+
+```{r}
+library(readxl)
+
+iller_nufus <- read_excel("data/turkey/iller_nufus_2019.xlsx")
+il_harita <- st_read("data/turkey/TR3_Map.json")
 
 ```
 
-# Problem 3
-
-Write code that will place the numbers 1 to 100 separately into a variable using for loop. Then, again using the seq function.
+İki dataframe nesnesi incelendiğinde ikisi arasında ortak olarak `NUTS_ID` ve `BOLGEKOD` alanlarının ortak olduğu görülmektedir.
 
 ```{r}
-# for loop solution
-# i becomes the number 1 to 100 at each step of the loop
+str(iller_nufus, max.level=3)
+str(il_harita, max.level=1)
+```
+
+Ortak olan kolonları kulllanrak `iller_nufus` dataframe'indeki tüm verileri `il_harita` dataframe'i ile birleştirebiliriz.
 
 
-a <- length(100) # make empty variable, set length to 100
-for (i in 1:100){
-  a[i] <-i #assigns the number in i, to the ith index of a
-}
+```{r}
 
-print(a)
+il_harita <- il_harita %>% left_join(iller_nufus, by = c("NUTS_ID"="BOLGEKOD"))
 
-# for loop solution #2
-
-a<-c() #create empty variable using combine command
-for (i in 1:100){
-  a<-c(a,i) # keeps combining a with itself and the new number in i
-}
-print(a)
-
-# seq solution
-a <- seq(1,100,1) # look up help for seq using ?seq() in console
-print(a)
+head(il_harita)
 
 ```
 
-# Replace this with problem 4
+Bu işlemi yaptıktan sonra il bazında nüfusu gösteren tematik harita ve diğer çeşitli mekansal analizler yapılabilir. Ancak şu aşamada bu örneği burada bırakmak istiyorum. Gelecek bölümlerdeki çalışmalarda uluslararası diğer zengin veri kaynaklarını tercih edeceğim. Özellikle [GEO DA Center](https://geodacenter.github.io/data-and-lab//)' da yer alan verileri. Burada yer alan mekansal veriler genellikle `shp` veya `json` verileri içerisine katman birleştirme işlemi hali yapılmış şekilde araştırmacılara sunulmaktadır. Dolayısıyla ileriki görselleştirme ve mekansal ekonometri ile ilgili bölümlerde katman birleştirme işlemini yapmayacağız. Ancak gerçek hayattaki araştırmaların neredeyse hepsinde katman birleştirme işlemleri uygulamak gerektiği için yukarıdaki iş akışını bilmekte fayda bulunmaktadır.
 
-And keep going. Try to solve the problems with different scripts that provide the same solution. Good luck, Happy coding.
+
+
+
+# Veri Görselleştirme
+
+Çalışmada örnek veriseti olarak [NYC socio demographics](https://geodacenter.github.io/data-and-lab//NYC_Tract_ACS2008_12/) veri setini kullanıyoruz.
+
+
+```{r}
+
+nyc <- st_read("data/nyctract_acs/NYC_Tract_ACS2008_12.shp")
+
+```
+
+```{r}
+library(tmap)
+
+tm_shape(nyc) +
+  tm_polygons()
+```
+
+Her bir mahalledeki Hispanik kökenli nüfüsun toplam nüfus içerisindeki payını hesaplayalım.
+
+```{r}
+
+nyc$hispanic_share <- nyc$hispanic/nyc$poptot
+
+tm_shape(nyc) +
+  tm_polygons("hispanic_share")
+```
+
+Objemizde koordinat referans sisteminin tanımlanmadığını görüyoruz
+
+```{r}
+st_crs(nyc)
+```
+
+
+
+```{r}
+tm_shape(nyc) +
+  tm_bubbles("hispanic_share")
+```
+
+
+tmap paketi içerisinde projeksiyonlar daha önceden veri yapısı değiştirilmeden görselleştirme esnasında değiştirilebilmektedir.
+
+
+```{r}
+tm_shape(nyc) +
+  tm_polygons("hispanic_share")
+```
+
+`tmap` paketinin en avantajlı yani tematik haritaların çok az kodla temiz bir şekilde üretebilmemize imkan tanımasıdır. R ekosistemindeki görselleştirme alanındaki en iyi paket kuşkusuz `ggplot2` paketidir. `ggplot2` ile mekansal veri görselleştirmesine ek olarak bir çok türdeki statik görselleştirme çok başarılı şekilde yapılabilmekte, kullanıcıya çok fazla esneklik tanınmaktadır. Ancak `ggplot2` doğası itibariyle kullanıcıya genelleştirilmiş bir çerçeve sunduğu için, baskıya hazır br coğrafi görselleştirmede `tmap`'e kıyasla çok daha fazla kullanıcın özelleştirilmiş kod yazmasını gerektirmektedir. Kimi zaman çok kompleks bir işi gerçekleştirmek istediğimizde `ggplo2`'yi kullanabiliriz. Ama çoğu durumda `tmap` yeterli bir seçenektir.
+
+Şimdi yukarıda yaptığımız haritayı biraz daha özelleştirelim!
+
+Yukarıda gördüğünüz gibi lejand alanı otomatik olarak verinin minimum-maximum aralığını (range) 5' bölmüş buna uygun olarak renklendirmeleri yapmıştır. Bundan farklı olarak aşağıdaki seçenekleri kullanarak farklı bölümleme yöntemlerini uygulayabiliz.
+
+- quantile
+- jenks
+- pretty
+- equal
+- sd
+
+```{r}
+tm_shape(nyc) +
+  tm_polygons("hispanic_share",
+              style = "pretty",
+              palette = "Reds") +
+  tm_legend(legend.position = c("left", "top"))
+  
+  
+  
+```
+
+Bölümleme işlemini manual olarak da ayarlayabiliriz.
+
+
+```{r}
+cuts <- c(0, 0.1, 0.4, 0.8, 1)
+
+tm_shape(nyc) +
+  tm_polygons("hispanic_share",
+              breaks = cuts,
+              palette = "Reds",
+              border.col = "white", 
+              border.alpha = 0.5) +
+  tm_legend(legend.position = c("left", "top"))
+
+```
+
+
+Paletde renk sırası aşağıdaki şekilde tersine çevirilebilir. Ancak çalıştığımız bu örnek açısından daha iyi oldu denemez
+
+```{r}
+tm_shape(nyc) +
+  tm_polygons("hispanic_share",
+              style = "pretty",
+              palette = "-Reds",
+              border.col = "white", 
+              border.alpha = 0.5) +
+  tm_legend(legend.position = c("left", "top"))
+```
+
+
+Kendi renk paletimizi de tanımlayabiliriz
+
+```{r}
+mycols <- c("#f0f4c3", "#dce775", "#cddc39", "#afb42b", "#827717")
+
+tm_shape(nyc) +
+  tm_polygons("hispanic_share",
+              style = "pretty",
+              palette = mycols,
+              border.col = "white", 
+              border.alpha = 0.5) +
+  tm_legend(legend.position = c("left", "top"))
+```
+
+Lejandımızın ve grafiğimizin başlığını değiştirebiliriz
+
+
+```{r}
+mymap <- tm_shape(nyc) +
+  tm_polygons("hispanic_share",
+              style = "quantile",
+              palette = "BuPu",
+              border.col = "white", 
+              border.alpha = 0.5,
+              title = "Hispanik Nüfus Oranı (%)") +
+  tm_legend(legend.position = c(0.01, 0.5)) +
+  tm_layout(title = "New York'da Hispanik Nüfusun Dağılımı",
+    title.size = 1.1,
+    title.position = c("center", "top")) +
+  tm_layout(inner.margins = c(0.06, 0.10, 0.10, 0.08),
+            frame = FALSE)
+
+mymap
+
+```
+
+Yapmış olduğunu haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz
+
+```{r, eval=FALSE}
+tmap_save(mymap,"newyork-hispanics.png", height = 6, width = 6, dpi=600)
+
+```
