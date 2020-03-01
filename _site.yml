@@ -1,11 +1,11 @@
-name: "MyLabJournal"
+name: "R ile Mekansal Veri Analizi"
 navbar:
-  title: "MyLabJournal"
+  title: "R ile Mekansal Veri Analizi"
   left:
-    - text: "Home"
+    - text: "Giriş"
       href: index.html
-    - text: "Journal"
-      href: Journal.html
-    - text: "Links"
+    - text: "İçerik"
+      href: R_Mekansal.html
+    - text: "Ek Kaynaklar"
       href: Links.html
 output_dir: "docs"

@@ -1,4 +1,5 @@
 base
+htmltools
 sf
 tidyverse
 ggplot2

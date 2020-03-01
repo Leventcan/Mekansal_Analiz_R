@@ -11,7 +11,7 @@
 
 
 
-<title>Journal</title>
+<title>R ile Mekansal Veri Analizi</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -372,18 +372,18 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">MyLabJournal</a>
+      <a class="navbar-brand" href="index.html">R ile Mekansal Veri Analizi</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">Giriş</a>
 </li>
 <li>
-  <a href="Journal.html">Journal</a>
+  <a href="R_Mekansal.html">İçerik</a>
 </li>
 <li>
-  <a href="Links.html">Links</a>
+  <a href="Links.html">Ek Kaynaklar</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -397,15 +397,16 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Journal</h1>
+<h1 class="title toc-ignore">R ile Mekansal Veri Analizi</h1>
 
 </div>
 
 
+<p><br></p>
 <div id="mekansal-verilerin-okunmas-ve-yazlmas" class="section level1">
-<h1>Mekansal verilerin okunması ve yazılması</h1>
+<h1><span class="header-section-number">1</span> Mekansal verilerin okunması ve yazılması</h1>
 <div id="vektor-dosyalar" class="section level2">
-<h2>Vektör dosyaları</h2>
+<h2><span class="header-section-number">1.1</span> Vektör dosyaları</h2>
 <p>Vektör dosyaları genellikle <code>shp</code>(Shapefile), <code>json</code>, <code>geojson</code> uzantılı dosyalar biçiminde bulunmaktadır. Diğer bir çok dosya biçimine ile ilgili bilgili <a href="https://en.0wikipedia.org/wiki/GIS_file_formats">wikipedia</a> içeriğinden öğrenilebilir. Ancak biz mevcut çalışmamızda genelikle <code>shp</code> vs <code>json</code> uzantılı dosyaları kullanacağız.</p>
 <p>Başlangıç aşamasında <code>shp</code> vs <code>json</code> verileriyle ilgili olarak önemli bir ayrıntıyı belirtmekte fayda bulunmaktadır.</p>
 <ul>
@@ -464,16 +465,16 @@ nc &lt;- st_read(system.file(&quot;shape/nc.shp&quot;, package=&quot;sf&quot;))<
 ##   ..- attr(*, &quot;names&quot;)= chr  &quot;AREA&quot; &quot;PERIMETER&quot; &quot;CNTY_&quot; &quot;CNTY_ID&quot; ...</code></pre>
 <p>En basit haliyle <code>nc</code> dataframe’indeki <code>geometry</code> kolonuna <code>plot</code> fonksiyonu uygulandığında haritanın geometrisine ulaşabiliriz. Bu örneğimizde <code>geometry</code> alanı MULTIPOLYGON karakteristiğinde olduğu için karşımıza boş bir poligon harita çıktı. Eğer <code>geometry</code> alanı ilerdeki örneklerde sıkça göreceğimiz gibi MULTIPOLYGON karakteristiğinde olsaydı <code>plot</code> fonksiyonu uygulandıktan sonra karşımıza boş bir düzlemde dağılmış noktalar görecektik.</p>
 <pre class="r"><code>plot(nc$geometry)</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="raster-dosyalar" class="section level2">
-<h2>Raster dosyaları</h2>
+<h2><span class="header-section-number">1.2</span> Raster dosyaları</h2>
 <p>Bu çalışmanın ana odağı raster odağı olmamak ile birlikte kısa bir gösterim yapabiliriz.</p>
 <p>Daha uygun bir boyutta raster dosyası bulunabilir</p>
 </div>
 </div>
 <div id="mekansal-katman-birlestirme" class="section level1">
-<h1>Mekansal Katman Birleştirme</h1>
+<h1><span class="header-section-number">2</span> Mekansal Katman Birleştirme</h1>
 <p>Gerçek hayattaki uygulamalarımızda genellikle mekana ilişkin verilerimiz <code>xlsx</code>, <code>csv</code> gibi dosyalarda veya veritabalarında iken mekansal geometrik veriler genellikle <code>shp</code>, <code>json</code>, `<code>geojson</code> gibi dosyalarda bulunmaktadır. Katman birleştirme (Spatial join) işlemi ile birlikte genellikle bu iki verinin birbiri ile eşleştirilmesini sağlarız.</p>
 <p>Örnek olarak aşağıdaki veri setinden gidelim.</p>
 <pre class="r"><code>library(readxl)
@@ -533,7 +534,7 @@ head(il_harita)</code></pre>
 <p>Bu işlemi yaptıktan sonra il bazında nüfusu gösteren tematik harita ve diğer çeşitli mekansal analizler yapılabilir. Ancak şu aşamada bu örneği burada bırakmak istiyorum. Gelecek bölümlerdeki çalışmalarda uluslararası diğer zengin veri kaynaklarını tercih edeceğim. Özellikle <a href="https://geodacenter.github.io/data-and-lab//">GEO DA Center</a>’ da yer alan verileri. Burada yer alan mekansal veriler genellikle <code>shp</code> veya <code>json</code> verileri içerisine katman birleştirme işlemi hali yapılmış şekilde araştırmacılara sunulmaktadır. Dolayısıyla ileriki görselleştirme ve mekansal ekonometri ile ilgili bölümlerde katman birleştirme işlemini yapmayacağız. Ancak gerçek hayattaki araştırmaların neredeyse hepsinde katman birleştirme işlemleri uygulamak gerektiği için yukarıdaki iş akışını bilmekte fayda bulunmaktadır.</p>
 </div>
 <div id="veri-gorsellestirme" class="section level1">
-<h1>Veri Görselleştirme</h1>
+<h1><span class="header-section-number">3</span> Veri Görselleştirme</h1>
 <p>Çalışmada örnek veriseti olarak <a href="https://geodacenter.github.io/data-and-lab//NYC_Tract_ACS2008_12/">NYC socio demographics</a> veri setini kullanıyoruz.</p>
 <pre class="r"><code>nyc &lt;- st_read(&quot;data/nyctract_acs/NYC_Tract_ACS2008_12.shp&quot;)</code></pre>
 <pre><code>## Reading layer `NYC_Tract_ACS2008_12&#39; from data source `C:\Users\leventcan.gultekin\Documents\--DOSYALARIM\R-Projects\GitHub\Mekansal_Analiz_R\data\nyctract_acs\NYC_Tract_ACS2008_12.shp&#39; using driver `ESRI Shapefile&#39;
@@ -547,23 +548,23 @@ head(il_harita)</code></pre>
 
 tm_shape(nyc) +
   tm_polygons()</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Her bir mahalledeki Hispanik kökenli nüfüsun toplam nüfus içerisindeki payını hesaplayalım.</p>
 <pre class="r"><code>nyc$hispanic_share &lt;- nyc$hispanic/nyc$poptot
 
 tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;)</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Objemizde koordinat referans sisteminin tanımlanmadığını görüyoruz</p>
 <pre class="r"><code>st_crs(nyc)</code></pre>
 <pre><code>## Coordinate Reference System: NA</code></pre>
 <pre class="r"><code>tm_shape(nyc) +
   tm_bubbles(&quot;hispanic_share&quot;)</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>tmap paketi içerisinde projeksiyonlar daha önceden veri yapısı değiştirilmeden görselleştirme esnasında değiştirilebilmektedir.</p>
 <pre class="r"><code>tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;)</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p><code>tmap</code> paketinin en avantajlı yani tematik haritaların çok az kodla temiz bir şekilde üretebilmemize imkan tanımasıdır. R ekosistemindeki görselleştirme alanındaki en iyi paket kuşkusuz <code>ggplot2</code> paketidir. <code>ggplot2</code> ile mekansal veri görselleştirmesine ek olarak bir çok türdeki statik görselleştirme çok başarılı şekilde yapılabilmekte, kullanıcıya çok fazla esneklik tanınmaktadır. Ancak <code>ggplot2</code> doğası itibariyle kullanıcıya genelleştirilmiş bir çerçeve sunduğu için, baskıya hazır br coğrafi görselleştirmede <code>tmap</code>’e kıyasla çok daha fazla kullanıcın özelleştirilmiş kod yazmasını gerektirmektedir. Kimi zaman çok kompleks bir işi gerçekleştirmek istediğimizde <code>ggplo2</code>’yi kullanabiliriz. Ama çoğu durumda <code>tmap</code> yeterli bir seçenektir.</p>
 <p>Şimdi yukarıda yaptığımız haritayı biraz daha özelleştirelim!</p>
 <p>Yukarıda gördüğünüz gibi lejand alanı otomatik olarak verinin minimum-maximum aralığını (range) 5’ bölmüş buna uygun olarak renklendirmeleri yapmıştır. Bundan farklı olarak aşağıdaki seçenekleri kullanarak farklı bölümleme yöntemlerini uygulayabiliz.</p>
@@ -579,7 +580,7 @@ tm_shape(nyc) +
               style = &quot;pretty&quot;,
               palette = &quot;Reds&quot;) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>Bölümleme işlemini manual olarak da ayarlayabiliriz.</p>
 <pre class="r"><code>cuts &lt;- c(0, 0.1, 0.4, 0.8, 1)
 
@@ -590,7 +591,7 @@ tm_shape(nyc) +
               border.col = &quot;white&quot;, 
               border.alpha = 0.5) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <p>Paletde renk sırası aşağıdaki şekilde tersine çevirilebilir. Ancak çalıştığımız bu örnek açısından daha iyi oldu denemez</p>
 <pre class="r"><code>tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;,
@@ -599,7 +600,7 @@ tm_shape(nyc) +
               border.col = &quot;white&quot;, 
               border.alpha = 0.5) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>Kendi renk paletimizi de tanımlayabiliriz</p>
 <pre class="r"><code>mycols &lt;- c(&quot;#f0f4c3&quot;, &quot;#dce775&quot;, &quot;#cddc39&quot;, &quot;#afb42b&quot;, &quot;#827717&quot;)
 
@@ -610,7 +611,7 @@ tm_shape(nyc) +
               border.col = &quot;white&quot;, 
               border.alpha = 0.5) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>Lejandımızın ve grafiğimizin başlığını değiştirebiliriz</p>
 <pre class="r"><code>mymap &lt;- tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;,
@@ -627,8 +628,8 @@ tm_shape(nyc) +
             frame = FALSE)
 
 mymap</code></pre>
-<p><img src="Journal_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
-<p>Yapmış olduğunu haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz</p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p>Yapmış olduğunuz haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz</p>
 <pre class="r"><code>tmap_save(mymap,&quot;newyork-hispanics.png&quot;, height = 6, width = 6, dpi=600)</code></pre>
 </div>
 

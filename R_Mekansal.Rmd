@@ -1,18 +1,20 @@
 ---
-title: "Journal"
+title: "R ile Mekansal Veri Analizi"
 output:
   html_document:
     toc: true
     toc_float: true
     collapsed: false
-    number_sections: false
+    number_sections: true
     toc_depth: 1
     #code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
+library(htmltools)
 ```
+<br>
 
 # Mekansal verilerin okunması ve yazılması
 
@@ -240,9 +242,11 @@ mymap
 
 ```
 
-Yapmış olduğunu haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz
+Yapmış olduğunuz haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz
+
 
 ```{r, eval=FALSE}
 tmap_save(mymap,"newyork-hispanics.png", height = 6, width = 6, dpi=600)
 
 ```
+
