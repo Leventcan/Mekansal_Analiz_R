@@ -8,4 +8,7 @@ navbar:
       href: R_Mekansal.html
     - text: "Ek Kaynaklar"
       href: Links.html
+  right:
+    - icon: fa-github fa-lg
+      href: https://github.com/Leventcan/Mekansal_Analiz_R
 output_dir: "docs"
