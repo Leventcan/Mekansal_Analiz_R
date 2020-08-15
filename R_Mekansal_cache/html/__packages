@@ -12,3 +12,6 @@ stringr
 forcats
 readxl
 tmap
+sp
+spData
+spdep

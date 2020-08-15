@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -74,9 +74,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -90,7 +88,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -195,8 +192,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -241,6 +236,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -253,48 +249,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -308,6 +265,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -343,8 +306,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -353,6 +314,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -410,9 +381,9 @@ div.tocify {
 
 
 <p><br></p>
-<div id="mekansal-verilerin-okunmas-ve-yazlmas" class="section level1">
+<div id="mekansal-verilerin-okunması-ve-yazılması" class="section level1">
 <h1><span class="header-section-number">1</span> Mekansal verilerin okunması ve yazılması</h1>
-<div id="vektor-dosyalar" class="section level2">
+<div id="vektör-dosyaları" class="section level2">
 <h2><span class="header-section-number">1.1</span> Vektör dosyaları</h2>
 <p>Vektör dosyaları genellikle <code>shp</code>(Shapefile), <code>json</code>, <code>geojson</code> uzantılı dosyalar biçiminde bulunmaktadır. Diğer bir çok dosya biçimine ile ilgili bilgili <a href="https://en.0wikipedia.org/wiki/GIS_file_formats">wikipedia</a> içeriğinden öğrenilebilir. Ancak biz mevcut çalışmamızda genelikle <code>shp</code> vs <code>json</code> uzantılı dosyaları kullanacağız.</p>
 <p>Başlangıç aşamasında <code>shp</code> vs <code>json</code> verileriyle ilgili olarak önemli bir ayrıntıyı belirtmekte fayda bulunmaktadır.</p>
@@ -474,13 +445,13 @@ nc &lt;- st_read(system.file(&quot;shape/nc.shp&quot;, package=&quot;sf&quot;))<
 <pre class="r"><code>plot(nc$geometry)</code></pre>
 <p><img src="R_Mekansal_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
-<div id="raster-dosyalar" class="section level2">
+<div id="raster-dosyaları" class="section level2">
 <h2><span class="header-section-number">1.2</span> Raster dosyaları</h2>
 <p>Bu çalışmanın ana odağı raster odağı olmamak ile birlikte kısa bir gösterim yapabiliriz.</p>
 <p>Daha uygun bir boyutta raster dosyası bulunabilir</p>
 </div>
 </div>
-<div id="mekansal-katman-birlestirme" class="section level1">
+<div id="mekansal-katman-birleştirme" class="section level1">
 <h1><span class="header-section-number">2</span> Mekansal Katman Birleştirme</h1>
 <p>Gerçek hayattaki uygulamalarımızda genellikle mekana ilişkin verilerimiz <code>xlsx</code>, <code>csv</code> gibi dosyalarda veya veritabalarında iken mekansal geometrik veriler genellikle <code>shp</code>, <code>json</code>, `<code>geojson</code> gibi dosyalarda bulunmaktadır. Katman birleştirme (Spatial join) işlemi ile birlikte genellikle bu iki verinin birbiri ile eşleştirilmesini sağlarız.</p>
 <p>Örnek olarak aşağıdaki veri setinden gidelim.</p>
@@ -540,7 +511,7 @@ head(il_harita)</code></pre>
 ## 6   542157 MULTIPOLYGON (((27.31631 40...</code></pre>
 <p>Bu işlemi yaptıktan sonra il bazında nüfusu gösteren tematik harita ve diğer çeşitli mekansal analizler yapılabilir. Ancak şu aşamada bu örneği burada bırakmak istiyorum. Gelecek bölümlerdeki çalışmalarda uluslararası diğer zengin veri kaynaklarını tercih edeceğim. Özellikle <a href="https://geodacenter.github.io/data-and-lab//">GEO DA Center</a>’ da yer alan verileri. Burada yer alan mekansal veriler genellikle <code>shp</code> veya <code>json</code> verileri içerisine katman birleştirme işlemi hali yapılmış şekilde araştırmacılara sunulmaktadır. Dolayısıyla ileriki görselleştirme ve mekansal ekonometri ile ilgili bölümlerde katman birleştirme işlemini yapmayacağız. Ancak gerçek hayattaki araştırmaların neredeyse hepsinde katman birleştirme işlemleri uygulamak gerektiği için yukarıdaki iş akışını bilmekte fayda bulunmaktadır.</p>
 </div>
-<div id="veri-gorsellestirme" class="section level1">
+<div id="veri-görselleştirme" class="section level1">
 <h1><span class="header-section-number">3</span> Veri Görselleştirme</h1>
 <p>Çalışmada örnek veriseti olarak <a href="https://geodacenter.github.io/data-and-lab//NYC_Tract_ACS2008_12/">NYC socio demographics</a> veri setini kullanıyoruz.</p>
 <pre class="r"><code>nyc &lt;- st_read(&quot;data/nyctract_acs/NYC_Tract_ACS2008_12.shp&quot;)</code></pre>
@@ -638,6 +609,108 @@ mymap</code></pre>
 <p><img src="R_Mekansal_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <p>Yapmış olduğunuz haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz</p>
 <pre class="r"><code>tmap_save(mymap,&quot;newyork-hispanics.png&quot;, height = 6, width = 6, dpi=600)</code></pre>
+<p><br></p>
+</div>
+<div id="mekansal-otokorelasyon" class="section level1">
+<h1><span class="header-section-number">4</span> Mekansal Otokorelasyon</h1>
+<p>Gerçek hayatta üretilen istatistikler bakımından erişebildiğimiz çoğu veri, nokta bazlı verilerden ziyade belirli sınırlar ölçeğinde tanımlanmış alan üzerinde toplulaştırılmış verilerdir. Yani çoğu zaman ülkedeki nüfus bilgisi bireylerin yaşadığı yerlerin noktasal konumları olarak değil il, ilçe ve mahaller gibi belirli sınırları olan alanlardaki toplu sayı olarak ifade edilmekte ve yayınlanmaktadır.</p>
+<p>Bu sınırlar genellikle idari nitelikli olmakla birlikte mevcut mekansal örüntünün oluşumu belli ölçüde ilişkili olabilmektedir. Yukarıdaki veri görselleştirme pratiklerimizde gördüğümüz gibi hispanik nüfus oranı yüksek olan sahalar (tract) genellikle birbirine komşu durumda olmakta, belirli alanlarda öbeklenme eğilimi göstermekteydi. Buna benzer veya daha farklı bir çok eğilim verisetlerinde karşımıza çıkabilmektedir.</p>
+<p>Ancak alansal veriler kullanılırken göz önünde bulundurulması gereken önemli bir nokta bulunmaktadır. Literatürde Değiştirilebilir Alansal Birim Problemi ((Modifiable Areal Unit Problem)[<a href="https://en.wikipedia.org/wiki/Modifiable_areal_unit_problem" class="uri">https://en.wikipedia.org/wiki/Modifiable_areal_unit_problem</a>]) olarak adlandırılan soruna göre nokta bazlı verilerin belirli tanılanmış alan üzerinde toplulaştırılması hesaplanacak istatistiki parametrelerin değerlerini belirlenmesinde önemli ölçüde belirleyicidir. Çünkü bu toplulaştırma işlemi kimi durumlarda harita yapıcı kimi durumda idari sınırları belirleyicilerin seçiminden kaynaklanan “istatistiki yanlılık” sorunlarıyla karşılaşılabilinmektedir.</p>
+<p>Mekansal otokorelasyon konusuna geri dönelim. Peki bu bahsettiğimiz alansal birimlerin arasındaki ilişkiyi matematiksel olara nasıl ele alabiliriz? Bu noktada genellikle ağırlık matrisleri (Spatial Weight Matrices) olarak adlandırılan bölgeler arası mekansal ilişkiyi gösteren matrisler kullanılmaktadır. <span class="math inline">\(n\)</span> adet alana sahip bir verisetinin <span class="math inline">\(W\)</span> ağırlık matrisinin yapısı aşağıdaki şekildedir.</p>
+<p><span class="math display">\[W = \begin{bmatrix}
+w_{11} &amp; w_{12}  &amp; \cdots   &amp; w_{1n}\\ 
+w_{21} &amp; w_{22}  &amp; \cdots   &amp; w_{2n}\\ 
+\vdots &amp; \vdots  &amp;  \ddots  &amp; \vdots \\ 
+w_{n1} &amp; w_{n2}  &amp; \cdots   &amp; w_{nn}
+\end{bmatrix}\]</span></p>
+<p>Görüldüğü üzere <span class="math inline">\(W\)</span> matris, <span class="math inline">\(n\times n\)</span> boyut özelliklerine sahip bir matristir. Örneğin <span class="math inline">\(w_{12}\)</span> değeri 1 indeks değerine sahip bölge ile 2 indeks değerine sahip bölge arasındaki mekansal ilişkiyi göstermektedir. Bu mekansal ilişki iki bölge arasındaki kuş uçuşu uzaklık, otoyol km uzaklığı gibi sürekli değerler ile ifade edilebilir. Ya da literatürde daya sık kullanılan bölgeler arasında sınır komşuluğunun var olup olmadığına göre 1 ve 0 değerleri alabilir. Bu matris literatürde komşuluk matrisi olarak adlandırılmaktadır. Bekleneceği üzere matris içerisinde bölgenin kendisiyle olan ilişkisi 0 değerini almakta, <span class="math inline">\(w_{ij}\)</span> değeri <span class="math inline">\(w_{ji}\)</span> değerine eşit olacaktır. Bu bakımdan matrisi diyagonal değerlerinin 0 olduğu simetrik kare matris özelliklerine sahip olmaktadır.</p>
+<p>100 bölgeyi içeren bir veri setinin olması durumunda <span class="math inline">\(100\times100=10000\)</span> elemanlı bir matrisini el ile oluşturmak kuşkusuz çok uzun ve yorucu bir işlem alacaktır. Ancak mevcut durumda bir çoğu uygulaması veya R ve Python gibi programlama dillerinde bu ağırlık matrislerinin hesaplanmasını sağlayacak eklenti/paket bulunmaktadır. Biz de bu çalışma kapsamında <code>spdep</code> paketinde bulunan fonksiyonları kullanacağız. Ağırlık matrislerinin oluşturulmasında gerekli olan tek girdi mekana ait geometrik bilgilerin bulunduğu dosya(lar)’dır. Yani haritayı yüklerken kullandığımız <code>.shp</code>, <code>.json</code> vb. uzantılı dosyalar. Bu dosyaların içerisindeki poligonlardan birbiriyle hangi türden kesişimlere sahip olduğu programatik olarak hesaplanabilmektedir.</p>
+<p>Bu bölümde komşuluk ilişki matrisleri üzerinden uygulama yapacağız. Vaka olarak ABD’de 2012 ve 2016 başkanlık seçimlerine ilişkin ilçe (county) baz versetini kullacağım. Verisetinde yer alan değişkenlere ait açıklamalara <a href="https://geodacenter.github.io/data-and-lab//county_election_2012_2016-variables/">link</a>’ten erişip, verisetini indirebilirsiniz.</p>
+<p>Öncelikle <code>County_election_2012_16.shp</code> harita dosyasını içe aktarıyorum</p>
+<pre class="r"><code>library(tmap)
+library(sf)
+library(spdep)
+
+
+elections &lt;- st_read(&quot;data/election/County_election_2012_16.shp&quot;)</code></pre>
+<pre><code>## Reading layer `County_election_2012_16&#39; from data source `C:\Users\leventcan.gultekin\Documents\--DOSYALARIM\R-Projects\GitHub\Mekansal_Analiz_R\data\election\County_election_2012_16.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 3108 features and 84 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -124.7631 ymin: 24.5231 xmax: -66.9499 ymax: 49.38436
+## epsg (SRID):    NA
+## proj4string:    +proj=eqc +lat_ts=-66.09421768 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs</code></pre>
+<pre class="r"><code>#ABD haritasına uygun bir harita projeksiyonu kullanıyorum
+elections &lt;- st_set_crs(elections, 4326)
+st_crs(elections)</code></pre>
+<pre><code>## Coordinate Reference System:
+##   EPSG: 4326 
+##   proj4string: &quot;+proj=longlat +datum=WGS84 +no_defs&quot;</code></pre>
+<p>Yüklediğimiz haritaya kısaca bir göz atalım.</p>
+<pre class="r"><code>tm_shape(elections) + tm_polygons()</code></pre>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p>Dosyayı <code>sf</code> pakedine ait <code>st_read()</code> fonksiyonuyla birlikte okuduğumuz için nesnemizin sınıf özelliği şu anda “Simple Feature DataFrame” durumunda. Ancak <code>spdep</code> paketi içerisinde yer alan bir çok fonksiyon <code>sp</code> paketiyle ilişkili “Spatial Polygon Dataframe” sınıf özelliği ile çalışmaktadır. Bu yüzden elimizdeki <code>elections</code> nesnesini Spatial Polygon Dataframe’e çevirmek için <code>as()</code> fonksiyonunu kullanıyoruz.</p>
+<pre class="r"><code>elections_sp &lt;- as(elections, &quot;Spatial&quot;)</code></pre>
+<p>Komşuluk matrisinin oluşturulması sürecinde izleyeceğimiz adımlar aşağıdaki şekildedir. Öncelikle <code>poly2nb()</code> fonksiyonuyla nesnedeki her bir unique bölge ve ona ait komşular katmanlı list yapısında oluşturulmaktadır. Verisetini incelediğimde her bir bölgeyi unique olarak tanımlayan COUNTYNS kolonunu görüyorum. Bu sebeple <code>row.names</code> argüman alanını ilgili kolonla ilişkilendiriyorum. Daha sonra tamamlayıcı olarak bu komşuluk ilişkisini list nesnesi olarak ifade etmeye yarayan <code>poly2nb()</code> veya matris halinde oluşturmaya imkan veren <code>nb2mat()</code> fonksiyonlarından birini kullanmamız gerekmektedir. Bu örnekte ikisi için de ayrı ayrı nesneler oluşturuyorum.</p>
+<p>Kullandığımız verisetinde bazı ilçeler ada olduğu için bunların fiziki olarak kesişimi olan komşusu bulunmamakta, bu yüzden ağırlık matrisinin oluşturumasında <code>zero.policy = TRUE</code> argümanını kullanıyoruz. Bu sayede sınır komşuluğu olmayan bölgelerin bölgelerin matristeki tüm satır değerleri sıfır olarak oluşturulacaktır.</p>
+<pre class="r"><code>w &lt;- poly2nb(elections_sp, row.names=elections_sp$COUNTYNS)
+wm  &lt;- nb2listw(w, zero.policy = TRUE)
+wm2  &lt;- nb2mat(w, zero.policy = TRUE)</code></pre>
+<p>Komşuluk matrislerinin oluşturulmasında dikkat edilmesi gereken nokta, poligonlar arasında hangi tür kesişimlerin koşuluk olarak kabul edileceği ile ilgilidir. Aşağıdaki grafikte literatürde en sık kullanılan bazı komşuluk tanımları gösterilmektedir. <code>poly2nb()</code> fonksiyonunda default olarak <code>queen=TRUE</code> argümanı tanımlı durumdadır. Mevcut çalışmamda Queen tipi komşuluk ilişkisini kullanacağım için ayrıca belirtmedim.</p>
+<p><img src="data/contiguities.png" /></p>
+<pre class="r"><code>xy &lt;- coordinates(elections_sp)
+plot(elections_sp, col=&#39;gray&#39;, border=&#39;blue&#39;, lwd=2)
+plot(w, xy, col=&#39;red&#39;, lwd=2, add=TRUE)</code></pre>
+<p>Şu anda komşuluk matrisimizi oluşturmuş durumdayız. Komşuluk matrisleri içerisinde mekansal bağımlılık ilişkisinin ele alındığı bir çok istatistiki ve ekonometrik model kullanılmakdaır. Bu çalışmada yanlızca mekansal otokorelasyon değerlerinin hesaplanması ve mekansal regresyon modellerinin tahminlenmesindeki kullanımına değineceğiz.</p>
+<div id="morans-i-değeri" class="section level3">
+<h3><span class="header-section-number">4.0.1</span> Moran’s I Değeri</h3>
+<p>Moran’s I indeksinin hesaplaması aşağıda belirtilen yönteme göre yapılmaktadır. Pearson Korelasyon değerinde olduğu gibi Moran’s I değeri de bize -1 ile 1 arasında değişen bir değer vermektedir. Endeks değeri 1’e yaklaşması söz konusu değişkene yönelik mekansal kümelenme seviyesinin yükseldiğini göstermektedir. Yani yüksek değerler bellir bir alanda, düşük değerler de belli bir alanda yoğunlaşmaktadır. -1 olduğunda ise birbirine zıt değere sahip bölgelerin yanyana konumlandığını göstermektedir. 0 olduğunda ise veriler rassal olarak dağılmış durumda olacaktır.</p>
+<p><br></p>
+<p><span class="math display">\[
+I = \frac{n}{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}}
+\frac{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}(x_i-\bar{x})(x_j-\bar{x})}{\sum_{i=1}^{n}(x_i - \bar{x})^2}
+\]</span> <br></p>
+<pre class="r"><code>tm_shape(elections) +
+  tm_polygons(&quot;pct_gop_16&quot;,
+              style = &quot;pretty&quot;,
+              palette = &quot;Reds&quot;) +
+  tm_legend(legend.position = c(&quot;right&quot;, &quot;bottom&quot;))</code></pre>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>Aşaşıdaki örnekte ABD başkanlık seçimlerinde Cumhuriyetçi adayın toplam oy yüzdesine yönelik Moran’s I değerini hesaplıyorum.</p>
+<pre class="r"><code>#Moran I Anlamlılık Değeri
+moran.test(elections$GOPvotes12, listw = wm, zero.policy = T)</code></pre>
+<pre><code>## 
+##  Moran I test under randomisation
+## 
+## data:  elections$GOPvotes12  
+## weights: wm  n reduced by no-neighbour observations
+##   
+## 
+## Moran I statistic standard deviate = 39.017, p-value &lt; 2.2e-16
+## alternative hypothesis: greater
+## sample estimates:
+## Moran I statistic       Expectation          Variance 
+##      0.4142324754     -0.0003221649      0.0001128910</code></pre>
+<p>Moran’s I değeri 0.4142 çıkmış görünüyor. Yani Cumhuriyetçi adayın aldığı belirli bir County’de aldığı oy oranının komşusu olduğu bölgelerdeki oy oranıyla 0.41 değerinde korele olduğu görülmektedir. Yukarıdaki çıktıda yer alan p-value değerine bakılarak sonucun anlamlılığı da sınanabilir.</p>
+<p>Moran’s I Endeksi, mekansal otokorelasyon hesaplamalarında en sık kullanılan yöntemdir. Ancak bunların yanında Geary’s C , Getis-Ord G gibi bir çeşitli global mekansal otokorelasyon test yöntemleri de bulunmaktadır. Tüm bu yöntemlere yönelik fonksiyonlar <code>spdep</code> kütüphanesi içerisind bulunmaktadır.</p>
+<p>Geary’s <span class="math inline">\(C\)</span>:</p>
+<p><span class="math display">\[C = \frac{(n-1)}{2\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}}
+\frac{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}(x_i-x_j)^2}{\sum_{i=1}^{n}(x_i - \bar{x})^2}\]</span></p>
+<p>The value of Geary’s C lies between 0 and some unspecified value greater than 1. Values significantly lower than 1 demonstrate increasing positive spatial autocorrelation, whilst values significantly higher than 1 illustrate increasing negative spatial autocorrelation.</p>
+<p>Geary’s C is inversely related to Moran’s I, but it is not identical. Moran’s I is a measure of global spatial autocorrelation, while Geary’s C is more sensitive to local spatial autocorrelation.</p>
+<pre class="r"><code>geary.test(elections$GOPvotes12, listw = wm, zero.policy = T)</code></pre>
+<pre><code>## 
+##  Geary C test under randomisation
+## 
+## data:  elections$GOPvotes12 
+## weights: wm 
+## 
+## Geary C statistic standard deviate = 15.943, p-value &lt; 2.2e-16
+## alternative hypothesis: Expectation greater than statistic
+## sample estimates:
+## Geary C statistic       Expectation          Variance 
+##      0.6149039042      1.0000000000      0.0005834672</code></pre>
+</div>
 </div>
 
 
@@ -658,6 +731,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

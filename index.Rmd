@@ -21,7 +21,8 @@ output: html_document
 
 Mekansal veri analizi, örüntülerin tespiti ve bu örüntülerin birbiri ile ilişkisi ve bu örüntünün oluşumunu etkileyen faktörleri incelemeyi amaçlamaktadır. Bu bağlamda mekansal veri analizi sosyoekonomik dinamiklerin anlamlandırılması ve açıklanmasında önemli bir yaklaşım olarak öne çıkmakta, uzamın, mekansal örüntü ve süreçlerin anlaşıması konusunda kavrayışımızı güçlendirmektedir
 
-Bu web sitesinde mekansal veri analizinde analizindeki çeşitli yöntemlere değinilecektir. Uygulamalı örnekler R programlama dili üzerinden gerçekleştirilecektir. Sitenin hedef kitlesi mekansal veriyle çalışmakta olan sosyal bilimcilerdir. 
+Bu web sitesinde mekansal veri analizinde analizindeki çeşitli yöntemlere değinilecektir. Uygulamalı örnekler R programlama dili üzerinden gerçekleştirilecektir. Site içerisinde konular derinlemesine incelenmeyecek en sık kullanılan fonksiyonlar yardımıyla okuyucuya konu tanıtılmaya çalışılacaktır.
+
 
 
 

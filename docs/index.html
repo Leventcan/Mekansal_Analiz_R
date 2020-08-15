@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -71,9 +71,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -87,7 +85,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -192,8 +189,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -238,6 +233,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -250,20 +246,17 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -325,8 +318,8 @@ $(document).ready(function () {
 <div class="col-sm-6">
 <h1 id="r-ile-mekansal-veri-analizi"><strong>R ile Mekansal Veri Analizi</strong></h1>
 <p>Mekansal veri analizi, örüntülerin tespiti ve bu örüntülerin birbiri ile ilişkisi ve bu örüntünün oluşumunu etkileyen faktörleri incelemeyi amaçlamaktadır. Bu bağlamda mekansal veri analizi sosyoekonomik dinamiklerin anlamlandırılması ve açıklanmasında önemli bir yaklaşım olarak öne çıkmakta, uzamın, mekansal örüntü ve süreçlerin anlaşıması konusunda kavrayışımızı güçlendirmektedir</p>
-<p>Bu web sitesinde mekansal veri analizinde analizindeki çeşitli yöntemlere değinilecektir. Uygulamalı örnekler R programlama dili üzerinden gerçekleştirilecektir. Sitenin hedef kitlesi mekansal veriyle çalışmakta olan sosyal bilimcilerdir.</p>
-<h2 id="icerik">İçerik</h2>
+<p>Bu web sitesinde mekansal veri analizinde analizindeki çeşitli yöntemlere değinilecektir. Uygulamalı örnekler R programlama dili üzerinden gerçekleştirilecektir. Site içerisinde konular derinlemesine incelenmeyecek en sık kullanılan fonksiyonlar yardımıyla okuyucuya konu tanıtılmaya çalışılacaktır.</p>
+<h2 id="içerik">İçerik</h2>
 <ol style="list-style-type: decimal">
 <li>Mekansal Veri Türleri</li>
 <li>Mekansal Veri Manipülasyonu</li>
@@ -355,6 +348,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

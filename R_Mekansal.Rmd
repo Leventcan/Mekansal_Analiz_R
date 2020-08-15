@@ -250,3 +250,165 @@ tmap_save(mymap,"newyork-hispanics.png", height = 6, width = 6, dpi=600)
 
 ```
 
+<br>
+
+# Mekansal Otokorelasyon
+
+Gerçek hayatta üretilen istatistikler bakımından erişebildiğimiz çoğu veri, nokta bazlı verilerden ziyade belirli sınırlar ölçeğinde tanımlanmış alan üzerinde toplulaştırılmış verilerdir. Yani çoğu zaman ülkedeki nüfus bilgisi bireylerin yaşadığı yerlerin noktasal konumları olarak değil il, ilçe ve mahaller gibi belirli sınırları olan alanlardaki toplu sayı olarak ifade edilmekte ve yayınlanmaktadır.
+
+Bu sınırlar genellikle idari nitelikli olmakla birlikte mevcut mekansal örüntünün oluşumu belli ölçüde ilişkili olabilmektedir. Yukarıdaki veri görselleştirme pratiklerimizde gördüğümüz gibi hispanik nüfus oranı yüksek olan sahalar (tract) genellikle birbirine komşu durumda olmakta, belirli alanlarda öbeklenme eğilimi göstermekteydi. Buna benzer veya daha farklı bir çok eğilim verisetlerinde karşımıza çıkabilmektedir.
+
+Ancak alansal veriler kullanılırken göz önünde bulundurulması gereken önemli bir nokta bulunmaktadır. Literatürde Değiştirilebilir Alansal Birim Problemi ((Modifiable Areal Unit Problem)[https://en.wikipedia.org/wiki/Modifiable_areal_unit_problem]) olarak adlandırılan soruna göre nokta bazlı verilerin belirli tanılanmış alan üzerinde toplulaştırılması hesaplanacak istatistiki parametrelerin değerlerini belirlenmesinde önemli ölçüde belirleyicidir. Çünkü bu toplulaştırma işlemi kimi durumlarda harita yapıcı kimi durumda idari sınırları belirleyicilerin seçiminden kaynaklanan "istatistiki yanlılık" sorunlarıyla karşılaşılabilinmektedir.
+
+
+
+Mekansal otokorelasyon konusuna geri dönelim. Peki bu bahsettiğimiz alansal birimlerin arasındaki  ilişkiyi matematiksel olara nasıl ele alabiliriz? Bu noktada genellikle ağırlık matrisleri (Spatial Weight Matrices) olarak adlandırılan bölgeler arası mekansal ilişkiyi gösteren matrisler kullanılmaktadır. $n$ adet alana sahip bir verisetinin $W$ ağırlık matrisinin yapısı aşağıdaki şekildedir.
+
+$$W = \begin{bmatrix}
+w_{11} & w_{12}  & \cdots   & w_{1n}\\ 
+w_{21} & w_{22}  & \cdots   & w_{2n}\\ 
+\vdots & \vdots  &  \ddots  & \vdots \\ 
+w_{n1} & w_{n2}  & \cdots   & w_{nn}
+\end{bmatrix}$$
+  
+
+Görüldüğü üzere $W$ matris, $n\times n$ boyut özelliklerine sahip bir matristir. Örneğin $w_{12}$ değeri 1 indeks değerine sahip bölge ile 2 indeks değerine sahip bölge arasındaki mekansal ilişkiyi göstermektedir. Bu mekansal ilişki iki bölge arasındaki kuş uçuşu uzaklık, otoyol km uzaklığı gibi sürekli değerler ile ifade edilebilir. Ya da literatürde daya sık kullanılan bölgeler arasında sınır komşuluğunun var olup olmadığına göre 1 ve 0 değerleri alabilir. Bu matris literatürde komşuluk matrisi olarak adlandırılmaktadır.  Bekleneceği üzere matris içerisinde bölgenin kendisiyle olan ilişkisi 0 değerini almakta,  $w_{ij}$ değeri $w_{ji}$ değerine eşit olacaktır. Bu bakımdan matrisi diyagonal değerlerinin 0 olduğu simetrik kare matris özelliklerine sahip olmaktadır.
+
+100 bölgeyi içeren bir veri setinin olması durumunda $100\times100=10000$ elemanlı bir matrisini el ile oluşturmak kuşkusuz çok uzun ve yorucu bir işlem alacaktır. Ancak mevcut durumda bir çoğu uygulaması veya R ve Python gibi programlama dillerinde bu ağırlık matrislerinin hesaplanmasını sağlayacak eklenti/paket bulunmaktadır. Biz de bu çalışma kapsamında `spdep` paketinde bulunan fonksiyonları kullanacağız. Ağırlık matrislerinin oluşturulmasında gerekli olan tek girdi mekana ait geometrik bilgilerin bulunduğu dosya(lar)'dır. Yani haritayı yüklerken kullandığımız `.shp`, `.json` vb. uzantılı dosyalar. Bu dosyaların içerisindeki poligonlardan birbiriyle hangi türden kesişimlere sahip olduğu programatik olarak hesaplanabilmektedir.
+
+
+
+Bu bölümde komşuluk ilişki matrisleri üzerinden uygulama yapacağız. Vaka olarak  ABD'de 2012 ve 2016 başkanlık seçimlerine ilişkin ilçe (county) baz versetini kullacağım. Verisetinde yer alan değişkenlere ait açıklamalara [link](https://geodacenter.github.io/data-and-lab//county_election_2012_2016-variables/
+)'ten erişip, verisetini indirebilirsiniz.
+
+Öncelikle `County_election_2012_16.shp` harita dosyasını içe aktarıyorum
+
+
+```{r}
+library(tmap)
+library(sf)
+library(spdep)
+
+
+elections <- st_read("data/election/County_election_2012_16.shp")
+
+#ABD haritasına uygun bir harita projeksiyonu kullanıyorum
+elections <- st_set_crs(elections, 4326)
+st_crs(elections)
+
+
+```
+
+Yüklediğimiz haritaya kısaca bir göz atalım.
+
+```{r}
+
+tm_shape(elections) + tm_polygons()
+
+```
+
+
+
+Dosyayı `sf` pakedine ait `st_read()` fonksiyonuyla birlikte okuduğumuz için nesnemizin sınıf özelliği şu anda "Simple Feature DataFrame" durumunda. Ancak `spdep` paketi içerisinde yer alan bir çok fonksiyon `sp` paketiyle ilişkili "Spatial Polygon Dataframe" sınıf özelliği ile çalışmaktadır. Bu yüzden elimizdeki `elections` nesnesini Spatial Polygon Dataframe'e çevirmek için `as()` fonksiyonunu kullanıyoruz.
+
+
+```{r}
+elections_sp <- as(elections, "Spatial")
+
+```
+
+
+Komşuluk matrisinin oluşturulması sürecinde izleyeceğimiz adımlar aşağıdaki şekildedir. Öncelikle `poly2nb()` fonksiyonuyla nesnedeki her bir unique bölge ve ona ait komşular katmanlı list yapısında oluşturulmaktadır. Verisetini incelediğimde her bir bölgeyi unique olarak tanımlayan COUNTYNS kolonunu görüyorum. Bu sebeple `row.names` argüman alanını ilgili kolonla ilişkilendiriyorum. Daha sonra tamamlayıcı olarak bu komşuluk ilişkisini list nesnesi olarak ifade etmeye yarayan `poly2nb()` veya matris halinde oluşturmaya imkan veren `nb2mat()` fonksiyonlarından birini kullanmamız gerekmektedir. Bu örnekte ikisi için de ayrı ayrı nesneler oluşturuyorum.
+
+Kullandığımız verisetinde bazı ilçeler ada olduğu için bunların fiziki olarak kesişimi olan komşusu bulunmamakta, bu yüzden ağırlık matrisinin oluşturumasında `zero.policy = TRUE` argümanını kullanıyoruz. Bu sayede sınır komşuluğu olmayan bölgelerin bölgelerin matristeki tüm satır değerleri sıfır olarak oluşturulacaktır.
+
+
+
+```{r}
+w <- poly2nb(elections_sp, row.names=elections_sp$COUNTYNS)
+wm  <- nb2listw(w, zero.policy = TRUE)
+wm2  <- nb2mat(w, zero.policy = TRUE)
+```
+
+Komşuluk matrislerinin oluşturulmasında dikkat edilmesi gereken nokta, poligonlar arasında hangi tür kesişimlerin koşuluk olarak kabul edileceği ile ilgilidir. Aşağıdaki grafikte literatürde en sık kullanılan bazı komşuluk tanımları gösterilmektedir. `poly2nb()` fonksiyonunda default olarak `queen=TRUE` argümanı tanımlı durumdadır. Mevcut çalışmamda Queen tipi komşuluk ilişkisini kullanacağım için ayrıca belirtmedim.
+
+![](data/contiguities.png)
+
+
+```{r, eval=FALSE}
+xy <- coordinates(elections_sp)
+plot(elections_sp, col='gray', border='blue', lwd=2)
+plot(w, xy, col='red', lwd=2, add=TRUE)
+```
+
+Şu anda komşuluk matrisimizi oluşturmuş durumdayız. Komşuluk matrisleri içerisinde mekansal bağımlılık ilişkisinin ele alındığı bir çok istatistiki ve ekonometrik model kullanılmakdaır. Bu çalışmada yanlızca mekansal otokorelasyon değerlerinin hesaplanması ve mekansal regresyon modellerinin tahminlenmesindeki kullanımına değineceğiz.
+
+
+### Moran's I Değeri
+
+Moran's I indeksinin hesaplaması aşağıda belirtilen yönteme göre yapılmaktadır. Pearson Korelasyon değerinde olduğu gibi Moran's I değeri de bize -1 ile 1 arasında değişen bir değer vermektedir. Endeks değeri 1'e yaklaşması söz konusu değişkene yönelik mekansal kümelenme seviyesinin yükseldiğini göstermektedir. Yani yüksek değerler bellir bir alanda, düşük değerler de belli bir alanda yoğunlaşmaktadır. -1 olduğunda ise birbirine zıt değere sahip bölgelerin yanyana konumlandığını göstermektedir. 0 olduğunda ise veriler rassal olarak dağılmış durumda olacaktır.
+
+<br>
+
+$$
+I = \frac{n}{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}}
+\frac{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}(x_i-\bar{x})(x_j-\bar{x})}{\sum_{i=1}^{n}(x_i - \bar{x})^2}
+$$
+<br>
+
+
+```{r}
+tm_shape(elections) +
+  tm_polygons("pct_gop_16",
+              style = "pretty",
+              palette = "Reds") +
+  tm_legend(legend.position = c("right", "bottom"))
+```
+
+
+
+
+
+
+Aşaşıdaki örnekte ABD başkanlık seçimlerinde Cumhuriyetçi adayın toplam oy yüzdesine yönelik Moran's I değerini hesaplıyorum.
+
+
+
+
+
+```{r}
+
+#Moran I Anlamlılık Değeri
+moran.test(elections$GOPvotes12, listw = wm, zero.policy = T)
+```
+
+Moran's I değeri 0.4142 çıkmış görünüyor. Yani Cumhuriyetçi adayın aldığı belirli bir County'de aldığı oy oranının komşusu olduğu bölgelerdeki oy oranıyla 0.41 değerinde korele olduğu görülmektedir. Yukarıdaki çıktıda yer alan p-value değerine bakılarak sonucun anlamlılığı da sınanabilir.
+
+Moran's I Endeksi, mekansal otokorelasyon hesaplamalarında en sık kullanılan yöntemdir. Ancak bunların yanında Geary's C , Getis-Ord G gibi bir çeşitli global mekansal otokorelasyon test yöntemleri de bulunmaktadır. Tüm bu yöntemlere yönelik fonksiyonlar `spdep` kütüphanesi içerisind bulunmaktadır.
+
+Geary’s $C$:
+
+$$C = \frac{(n-1)}{2\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}}
+\frac{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}(x_i-x_j)^2}{\sum_{i=1}^{n}(x_i - \bar{x})^2}$$
+
+The value of Geary's C lies between 0 and some unspecified value greater than 1. Values significantly lower than 1 demonstrate increasing positive spatial autocorrelation, whilst values significantly higher than 1 illustrate increasing negative spatial autocorrelation.
+
+Geary's C is inversely related to Moran's I, but it is not identical. Moran's I is a measure of global spatial autocorrelation, while Geary's C is more sensitive to local spatial autocorrelation.
+
+```{r}
+geary.test(elections$GOPvotes12, listw = wm, zero.policy = T)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
