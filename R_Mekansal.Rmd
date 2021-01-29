@@ -1,5 +1,6 @@
 ---
 title: "R ile Mekansal Veri Analizi"
+author: "Leventcan Gültekin"
 output:
   html_document:
     toc: true
@@ -348,7 +349,9 @@ wm2  <- nb2mat(w, zero.policy = TRUE)
 
 Komşuluk matrislerinin oluşturulmasında dikkat edilmesi gereken nokta, poligonlar arasında hangi tür kesişimlerin koşuluk olarak kabul edileceği ile ilgilidir. Aşağıdaki grafikte literatürde en sık kullanılan bazı komşuluk tanımları gösterilmektedir. `poly2nb()` fonksiyonunda default olarak `queen=TRUE` argümanı tanımlı durumdadır. Mevcut çalışmamda Queen tipi komşuluk ilişkisini kullanacağım için ayrıca belirtmedim.
 
-![](images/contiguities.png)
+
+
+![](images/contig2.png)
 
 
 ```{r, eval=FALSE}

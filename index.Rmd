@@ -18,6 +18,7 @@ output: html_document
 <div class="col-sm-6">
 
 # **R ile Mekansal Veri Analizi**
+### *Leventcan Gültekin*
 
 Mekansal veri analizi, örüntülerin tespiti ve bu örüntülerin birbiri ile ilişkisi ve bu örüntünün oluşumunu etkileyen faktörleri incelemeyi amaçlamaktadır. Bu bağlamda mekansal veri analizi sosyoekonomik dinamiklerin anlamlandırılması ve açıklanmasında önemli bir yaklaşım olarak öne çıkmakta, uzamın, mekansal örüntü ve süreçlerin anlaşıması konusunda kavrayışımızı güçlendirmektedir
 
