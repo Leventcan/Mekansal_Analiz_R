@@ -513,7 +513,9 @@ head(il_harita)</code></pre>
 </div>
 <div id="veri-görselleştirme" class="section level1">
 <h1><span class="header-section-number">3</span> Veri Görselleştirme</h1>
-<p>Çalışmada örnek veriseti olarak <a href="https://geodacenter.github.io/data-and-lab//NYC_Tract_ACS2008_12/">NYC socio demographics</a> veri setini kullanıyoruz.</p>
+<p>Bu bölümde kısaca <code>tmap</code> paketi ile temel düzeyde coğrafi veri görselleştirme örneklerine yer vereceğiz.Pratik veriseti olarak GEO DA Center’da bulunan New York’taki <em>tract</em> olarak adlandırılan küçük alt bölgelere ait çeşitli sosyo ekonomik verileri içeren <a href="https://geodacenter.github.io/data-and-lab//NYC_Tract_ACS2008_12/">NYC socio demographics</a> veri setini kullanacağım.</p>
+<p><code>tmap</code> paketinin en avantajlı yani tematik haritaların çok az kodla temiz bir şekilde üretebilmemize imkan tanımasıdır. R ekosistemindeki görselleştirme alanındaki en iyi paket kuşkusuz <code>ggplot2</code> paketidir. <code>ggplot2</code> barındırdığı esneklikler ile birlikte mekansal veri görselleştirmesine ek olarak bir çok türdeki statik görselleştirme çok başarılı şekilde yapılabilmektedir. Ancak <code>ggplot2</code> tasarımı itibariyle kullanıcıya genelleştirilmiş bir çerçeve sunduğu için, baskıya hazır br coğrafi görsel oluşturulmak istendiğinde <code>tmap</code>’e kıyasla çok daha fazla kullanıcın özelleştirilmiş kod yazmasını gerektirmektedir. Kimi zaman çok kompleks bir mekansal görsel oluşturmak istediğimizde gerçekleştirmek istediğimizde <code>ggplot2</code>’yi kullanabiliriz. Ama çoğu durumda <code>tmap</code> yeterli ve daha kolay bir seçenektir.</p>
+<p>Öncelikle verimizi içe aktaralım.</p>
 <pre class="r"><code>nyc &lt;- st_read(&quot;data/nyctract_acs/NYC_Tract_ACS2008_12.shp&quot;)</code></pre>
 <pre><code>## Reading layer `NYC_Tract_ACS2008_12&#39; from data source `C:\Users\leventcan.gultekin\Documents\--DOSYALARIM\R-Projects\GitHub\Mekansal_Analiz_R\data\nyctract_acs\NYC_Tract_ACS2008_12.shp&#39; using driver `ESRI Shapefile&#39;
 ## Simple feature collection with 2166 features and 113 fields
@@ -522,44 +524,43 @@ head(il_harita)</code></pre>
 ## bbox:           xmin: -74.25559 ymin: 40.49612 xmax: -73.70001 ymax: 40.91553
 ## epsg (SRID):    NA
 ## proj4string:    NA</code></pre>
+<p>Veri setinde 114 değişken bulunduğu için şu aşamada <code>str</code> fonksiyonu ile değişkenlerini incelemeyeceğim. İncelemek isterseniz kendi bilgisayarınızda bakabilirsiniz.</p>
+<p>Hernangi bir değişken için inceleme yapmadan doğrudan poligon geometrisini görselleştirelim.</p>
 <pre class="r"><code>library(tmap)
 
 tm_shape(nyc) +
   tm_polygons()</code></pre>
 <p><img src="R_Mekansal_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>Her bir mahalledeki Hispanik kökenli nüfüsun toplam nüfus içerisindeki payını hesaplayalım.</p>
+<p>Daha önce de belirttiğim gibi veriseti içerisinde çok detaylı demogragik veriler bulunmaktadır. Örnek olarak her bir bölgedeki hispanik kökenli nüfüsun toplam nüfus içerisindeki payını hesaplayalım.</p>
 <pre class="r"><code>nyc$hispanic_share &lt;- nyc$hispanic/nyc$poptot
 
 tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;)</code></pre>
 <p><img src="R_Mekansal_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>Objemizde koordinat referans sisteminin tanımlanmadığını görüyoruz</p>
-<pre class="r"><code>st_crs(nyc)</code></pre>
-<pre><code>## Coordinate Reference System: NA</code></pre>
 <pre class="r"><code>tm_shape(nyc) +
   tm_bubbles(&quot;hispanic_share&quot;)</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p>tmap paketi içerisinde projeksiyonlar daha önceden veri yapısı değiştirilmeden görselleştirme esnasında değiştirilebilmektedir.</p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Poligonların içini hispanik nüfus oranına göre boyayalım</p>
 <pre class="r"><code>tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;)</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
-<p><code>tmap</code> paketinin en avantajlı yani tematik haritaların çok az kodla temiz bir şekilde üretebilmemize imkan tanımasıdır. R ekosistemindeki görselleştirme alanındaki en iyi paket kuşkusuz <code>ggplot2</code> paketidir. <code>ggplot2</code> ile mekansal veri görselleştirmesine ek olarak bir çok türdeki statik görselleştirme çok başarılı şekilde yapılabilmekte, kullanıcıya çok fazla esneklik tanınmaktadır. Ancak <code>ggplot2</code> doğası itibariyle kullanıcıya genelleştirilmiş bir çerçeve sunduğu için, baskıya hazır br coğrafi görselleştirmede <code>tmap</code>’e kıyasla çok daha fazla kullanıcın özelleştirilmiş kod yazmasını gerektirmektedir. Kimi zaman çok kompleks bir işi gerçekleştirmek istediğimizde <code>ggplo2</code>’yi kullanabiliriz. Ama çoğu durumda <code>tmap</code> yeterli bir seçenektir.</p>
-<p>Şimdi yukarıda yaptığımız haritayı biraz daha özelleştirelim!</p>
-<p>Yukarıda gördüğünüz gibi lejand alanı otomatik olarak verinin minimum-maximum aralığını (range) 5’ bölmüş buna uygun olarak renklendirmeleri yapmıştır. Bundan farklı olarak aşağıdaki seçenekleri kullanarak farklı bölümleme yöntemlerini uygulayabiliz.</p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Şimdi yukarıda yaptığımız haritayı biraz daha özelleştirelim.</p>
+<p>Yukarıda gördüğünüz gibi lejand alanı otomatik olarak verinin minimum-maximum aralığını5’e bölmüş buna uygun olarak renklendirmeleri yapmıştır. Bundan farklı olarak aşağıdaki seçenekleri kullanarak farklı dilimleme yöntemlerini uygulayabiliz.</p>
 <ul>
-<li>quantile</li>
+<li>quantile (açıklamalar yazılabilir)</li>
 <li>jenks</li>
 <li>pretty</li>
 <li>equal</li>
 <li>sd</li>
 </ul>
+<p><code>"pretty"</code> argümanını kullanarak yeniden haritayı oluşturalım</p>
 <pre class="r"><code>tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;,
               style = &quot;pretty&quot;,
               palette = &quot;Reds&quot;) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<p>Bölümleme işlemini manual olarak da ayarlayabiliriz.</p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Otomatik bölümleme metodlarına ek olarak lejanddaki kırılma noktalarını manual olarak da ayarlayabiliriz.</p>
 <pre class="r"><code>cuts &lt;- c(0, 0.1, 0.4, 0.8, 1)
 
 tm_shape(nyc) +
@@ -569,7 +570,7 @@ tm_shape(nyc) +
               border.col = &quot;white&quot;, 
               border.alpha = 0.5) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>Paletde renk sırası aşağıdaki şekilde tersine çevirilebilir. Ancak çalıştığımız bu örnek açısından daha iyi oldu denemez</p>
 <pre class="r"><code>tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;,
@@ -578,8 +579,8 @@ tm_shape(nyc) +
               border.col = &quot;white&quot;, 
               border.alpha = 0.5) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-<p>Kendi renk paletimizi de tanımlayabiliriz</p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>Kendi oluşturduğumuz renk paletini kullanarak da görseli oluşturabiliriz.</p>
 <pre class="r"><code>mycols &lt;- c(&quot;#f0f4c3&quot;, &quot;#dce775&quot;, &quot;#cddc39&quot;, &quot;#afb42b&quot;, &quot;#827717&quot;)
 
 tm_shape(nyc) +
@@ -589,7 +590,7 @@ tm_shape(nyc) +
               border.col = &quot;white&quot;, 
               border.alpha = 0.5) +
   tm_legend(legend.position = c(&quot;left&quot;, &quot;top&quot;))</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>Lejandımızın ve grafiğimizin başlığını değiştirebiliriz</p>
 <pre class="r"><code>mymap &lt;- tm_shape(nyc) +
   tm_polygons(&quot;hispanic_share&quot;,
@@ -606,7 +607,7 @@ tm_shape(nyc) +
             frame = FALSE)
 
 mymap</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>Yapmış olduğunuz haritayı aşağıdaki şekilde bilgisayarınıza kaydedebilirsiniz</p>
 <pre class="r"><code>tmap_save(mymap,&quot;newyork-hispanics.png&quot;, height = 6, width = 6, dpi=600)</code></pre>
 <p><br></p>
@@ -615,7 +616,12 @@ mymap</code></pre>
 <h1><span class="header-section-number">4</span> Mekansal Otokorelasyon</h1>
 <p>Gerçek hayatta üretilen istatistikler bakımından erişebildiğimiz çoğu veri, nokta bazlı verilerden ziyade belirli sınırlar ölçeğinde tanımlanmış alan üzerinde toplulaştırılmış verilerdir. Yani çoğu zaman ülkedeki nüfus bilgisi bireylerin yaşadığı yerlerin noktasal konumları olarak değil il, ilçe ve mahaller gibi belirli sınırları olan alanlardaki toplu sayı olarak ifade edilmekte ve yayınlanmaktadır.</p>
 <p>Bu sınırlar genellikle idari nitelikli olmakla birlikte mevcut mekansal örüntünün oluşumu belli ölçüde ilişkili olabilmektedir. Yukarıdaki veri görselleştirme pratiklerimizde gördüğümüz gibi hispanik nüfus oranı yüksek olan sahalar (tract) genellikle birbirine komşu durumda olmakta, belirli alanlarda öbeklenme eğilimi göstermekteydi. Buna benzer veya daha farklı bir çok eğilim verisetlerinde karşımıza çıkabilmektedir.</p>
-<p>Ancak alansal veriler kullanılırken göz önünde bulundurulması gereken önemli bir nokta bulunmaktadır. Literatürde Değiştirilebilir Alansal Birim Problemi ((Modifiable Areal Unit Problem)[<a href="https://en.wikipedia.org/wiki/Modifiable_areal_unit_problem" class="uri">https://en.wikipedia.org/wiki/Modifiable_areal_unit_problem</a>]) olarak adlandırılan soruna göre nokta bazlı verilerin belirli tanılanmış alan üzerinde toplulaştırılması hesaplanacak istatistiki parametrelerin değerlerini belirlenmesinde önemli ölçüde belirleyicidir. Çünkü bu toplulaştırma işlemi kimi durumlarda harita yapıcı kimi durumda idari sınırları belirleyicilerin seçiminden kaynaklanan “istatistiki yanlılık” sorunlarıyla karşılaşılabilinmektedir.</p>
+<div id="değiştirilebilir-alansal-birim-problemi" class="section level3">
+<h3><span class="header-section-number">4.0.1</span> Değiştirilebilir Alansal Birim Problemi</h3>
+<p>Ancak alansal veriler kullanılırken göz önünde bulundurulması gereken önemli bir noktalardan birisi literatürde Değiştirilebilir Alansal Birim Problemi <a href="https://en.wikipedia.org/wiki/Modifiable_areal_unit_problem">Modifiable Areal Unit Problem</a> olarak adlandırılan sorundur. Gerçek hayatta coğrafi birimlerin sınırları harita yapıcının terchileri ve idari sınırlar gibi faktörlere bağlı olarak genellikle yapay niteliktedir. Bu kapsamda söz konusu coğrafi gözlem birimleri kullanılarak hesaplanacak olasılık yoğunluk fonksiyonları, istatistiki parametre tahminleri kullanılan coğrafi birimlere göre yanlı tahminlemeler verebililecektir.</p>
+<p>Konuyu somutlaştırmak için aşadaki üç senaryoyu dikkate alalım. Grafiklerdeki noktaları örneğin hastane, fabrika gibi gözlemlerin coğrafi konumu olarak düşünebiliriz. Senaryolardan da görüldüğü üzere dört farklı alanın tanımlanma biçimine bağlı olarak hesaplayacağımız dağılım fonksiyonları ve istatistikler çok farklı olacaktır</p>
+<p><img src="images/maup.PNG" /></p>
+<p>Örneğin sağlık ve epidemiyoloji alanında hastalık vakalarının tanımlanmış belirli bir alanda toplulaştırılması ve sağlık sorunlarıyla ilişkili olabilecek mekansal faktörlerin incelendiği çalışmalarda bu sorun sıkça yaşanabilmektedir. Bu bakımdan elde ettiğimiz sonuçların güçlülüğünü (robustness) test etmek amacıyla eğer imkan varsa farklı bölge tanımaları veya farklı ölçeklerin kullanıp sonuçlarını karşılaştırılabilir. Mesela bu bölümde inceleyecek olacağımız mekansal otokorelasyon değerlerinin güçlülüğünü ilçe, il ve bölge bazında hesaplanacak otokorelasyon değerleri ile karşılaştırarak inceleyebiliriz.</p>
 <p>Mekansal otokorelasyon konusuna geri dönelim. Peki bu bahsettiğimiz alansal birimlerin arasındaki ilişkiyi matematiksel olara nasıl ele alabiliriz? Bu noktada genellikle ağırlık matrisleri (Spatial Weight Matrices) olarak adlandırılan bölgeler arası mekansal ilişkiyi gösteren matrisler kullanılmaktadır. <span class="math inline">\(n\)</span> adet alana sahip bir verisetinin <span class="math inline">\(W\)</span> ağırlık matrisinin yapısı aşağıdaki şekildedir.</p>
 <p><span class="math display">\[W = \begin{bmatrix}
 w_{11} &amp; w_{12}  &amp; \cdots   &amp; w_{1n}\\ 
@@ -623,7 +629,7 @@ w_{21} &amp; w_{22}  &amp; \cdots   &amp; w_{2n}\\
 \vdots &amp; \vdots  &amp;  \ddots  &amp; \vdots \\ 
 w_{n1} &amp; w_{n2}  &amp; \cdots   &amp; w_{nn}
 \end{bmatrix}\]</span></p>
-<p>Görüldüğü üzere <span class="math inline">\(W\)</span> matris, <span class="math inline">\(n\times n\)</span> boyut özelliklerine sahip bir matristir. Örneğin <span class="math inline">\(w_{12}\)</span> değeri 1 indeks değerine sahip bölge ile 2 indeks değerine sahip bölge arasındaki mekansal ilişkiyi göstermektedir. Bu mekansal ilişki iki bölge arasındaki kuş uçuşu uzaklık, otoyol km uzaklığı gibi sürekli değerler ile ifade edilebilir. Ya da literatürde daya sık kullanılan bölgeler arasında sınır komşuluğunun var olup olmadığına göre 1 ve 0 değerleri alabilir. Bu matris literatürde komşuluk matrisi olarak adlandırılmaktadır. Bekleneceği üzere matris içerisinde bölgenin kendisiyle olan ilişkisi 0 değerini almakta, <span class="math inline">\(w_{ij}\)</span> değeri <span class="math inline">\(w_{ji}\)</span> değerine eşit olacaktır. Bu bakımdan matrisi diyagonal değerlerinin 0 olduğu simetrik kare matris özelliklerine sahip olmaktadır.</p>
+<p>Görüldüğü üzere <span class="math inline">\(W\)</span> matris, <span class="math inline">\(n\times n\)</span> boyut özelliklerine sahip bir matristir. Örneğin <span class="math inline">\(w_{12}\)</span> değeri 1 indeks değerine sahip bölge ile 2 indeks değerine sahip bölge arasındaki mekansal ilişkiyi göstermektedir. Bu mekansal ilişki iki bölge arasındaki kuş uçuşu uzaklık, otoyol km uzaklığı gibi sürekli değerler ile ifade edilebilir. Ya da literatürde daya sık kullanılan bölgeler arasında sınır komşuluğunun var olup olmadığına göre 1 ve 0 değerleri alabilir. Bu tip sınır komşuluğu durumlarında komşuluk (contiguity) matrisi olarak adlandırılmaktadır. Bekleneceği üzere matris içerisinde bölgenin kendisiyle olan ilişkisi 0 değerini almakta, <span class="math inline">\(w_{ij}\)</span> değeri <span class="math inline">\(w_{ji}\)</span> değerine eşit olacaktır. Bu bakımdan matrisi diyagonal değerlerinin 0 olduğu simetrik kare matris özelliklerine sahip olmaktadır.</p>
 <p>100 bölgeyi içeren bir veri setinin olması durumunda <span class="math inline">\(100\times100=10000\)</span> elemanlı bir matrisini el ile oluşturmak kuşkusuz çok uzun ve yorucu bir işlem alacaktır. Ancak mevcut durumda bir çoğu uygulaması veya R ve Python gibi programlama dillerinde bu ağırlık matrislerinin hesaplanmasını sağlayacak eklenti/paket bulunmaktadır. Biz de bu çalışma kapsamında <code>spdep</code> paketinde bulunan fonksiyonları kullanacağız. Ağırlık matrislerinin oluşturulmasında gerekli olan tek girdi mekana ait geometrik bilgilerin bulunduğu dosya(lar)’dır. Yani haritayı yüklerken kullandığımız <code>.shp</code>, <code>.json</code> vb. uzantılı dosyalar. Bu dosyaların içerisindeki poligonlardan birbiriyle hangi türden kesişimlere sahip olduğu programatik olarak hesaplanabilmektedir.</p>
 <p>Bu bölümde komşuluk ilişki matrisleri üzerinden uygulama yapacağız. Vaka olarak ABD’de 2012 ve 2016 başkanlık seçimlerine ilişkin ilçe (county) baz versetini kullacağım. Verisetinde yer alan değişkenlere ait açıklamalara <a href="https://geodacenter.github.io/data-and-lab//county_election_2012_2016-variables/">link</a>’ten erişip, verisetini indirebilirsiniz.</p>
 <p>Öncelikle <code>County_election_2012_16.shp</code> harita dosyasını içe aktarıyorum</p>
@@ -638,17 +644,34 @@ elections &lt;- st_read(&quot;data/election/County_election_2012_16.shp&quot;)</
 ## geometry type:  MULTIPOLYGON
 ## dimension:      XY
 ## bbox:           xmin: -124.7631 ymin: 24.5231 xmax: -66.9499 ymax: 49.38436
-## epsg (SRID):    NA
-## proj4string:    +proj=eqc +lat_ts=-66.09421768 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs</code></pre>
+## projected CRS:  WGS_1984_ARC_System_Zone_14</code></pre>
 <pre class="r"><code>#ABD haritasına uygun bir harita projeksiyonu kullanıyorum
 elections &lt;- st_set_crs(elections, 4326)
 st_crs(elections)</code></pre>
 <pre><code>## Coordinate Reference System:
-##   EPSG: 4326 
-##   proj4string: &quot;+proj=longlat +datum=WGS84 +no_defs&quot;</code></pre>
+##   User input: EPSG:4326 
+##   wkt:
+## GEOGCRS[&quot;WGS 84&quot;,
+##     DATUM[&quot;World Geodetic System 1984&quot;,
+##         ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+##             LENGTHUNIT[&quot;metre&quot;,1]]],
+##     PRIMEM[&quot;Greenwich&quot;,0,
+##         ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##     CS[ellipsoidal,2],
+##         AXIS[&quot;geodetic latitude (Lat)&quot;,north,
+##             ORDER[1],
+##             ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##         AXIS[&quot;geodetic longitude (Lon)&quot;,east,
+##             ORDER[2],
+##             ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+##     USAGE[
+##         SCOPE[&quot;unknown&quot;],
+##         AREA[&quot;World&quot;],
+##         BBOX[-90,-180,90,180]],
+##     ID[&quot;EPSG&quot;,4326]]</code></pre>
 <p>Yüklediğimiz haritaya kısaca bir göz atalım.</p>
 <pre class="r"><code>tm_shape(elections) + tm_polygons()</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>Dosyayı <code>sf</code> pakedine ait <code>st_read()</code> fonksiyonuyla birlikte okuduğumuz için nesnemizin sınıf özelliği şu anda “Simple Feature DataFrame” durumunda. Ancak <code>spdep</code> paketi içerisinde yer alan bir çok fonksiyon <code>sp</code> paketiyle ilişkili “Spatial Polygon Dataframe” sınıf özelliği ile çalışmaktadır. Bu yüzden elimizdeki <code>elections</code> nesnesini Spatial Polygon Dataframe’e çevirmek için <code>as()</code> fonksiyonunu kullanıyoruz.</p>
 <pre class="r"><code>elections_sp &lt;- as(elections, &quot;Spatial&quot;)</code></pre>
 <p>Komşuluk matrisinin oluşturulması sürecinde izleyeceğimiz adımlar aşağıdaki şekildedir. Öncelikle <code>poly2nb()</code> fonksiyonuyla nesnedeki her bir unique bölge ve ona ait komşular katmanlı list yapısında oluşturulmaktadır. Verisetini incelediğimde her bir bölgeyi unique olarak tanımlayan COUNTYNS kolonunu görüyorum. Bu sebeple <code>row.names</code> argüman alanını ilgili kolonla ilişkilendiriyorum. Daha sonra tamamlayıcı olarak bu komşuluk ilişkisini list nesnesi olarak ifade etmeye yarayan <code>poly2nb()</code> veya matris halinde oluşturmaya imkan veren <code>nb2mat()</code> fonksiyonlarından birini kullanmamız gerekmektedir. Bu örnekte ikisi için de ayrı ayrı nesneler oluşturuyorum.</p>
@@ -662,55 +685,78 @@ wm2  &lt;- nb2mat(w, zero.policy = TRUE)</code></pre>
 plot(elections_sp, col=&#39;gray&#39;, border=&#39;blue&#39;, lwd=2)
 plot(w, xy, col=&#39;red&#39;, lwd=2, add=TRUE)</code></pre>
 <p>Şu anda komşuluk matrisimizi oluşturmuş durumdayız. Komşuluk matrisleri içerisinde mekansal bağımlılık ilişkisinin ele alındığı bir çok istatistiki ve ekonometrik model kullanılmakdaır. Bu çalışmada yanlızca mekansal otokorelasyon değerlerinin hesaplanması ve mekansal regresyon modellerinin tahminlenmesindeki kullanımına değineceğiz.</p>
-<div id="morans-i-değeri" class="section level3">
-<h3><span class="header-section-number">4.0.1</span> Moran’s I Değeri</h3>
+</div>
+<div id="global-morans-i" class="section level3">
+<h3><span class="header-section-number">4.0.2</span> Global Moran’s I</h3>
 <p>Moran’s I indeksinin hesaplaması aşağıda belirtilen yönteme göre yapılmaktadır. Pearson Korelasyon değerinde olduğu gibi Moran’s I değeri de bize -1 ile 1 arasında değişen bir değer vermektedir. Endeks değeri 1’e yaklaşması söz konusu değişkene yönelik mekansal kümelenme seviyesinin yükseldiğini göstermektedir. Yani yüksek değerler bellir bir alanda, düşük değerler de belli bir alanda yoğunlaşmaktadır. -1 olduğunda ise birbirine zıt değere sahip bölgelerin yanyana konumlandığını göstermektedir. 0 olduğunda ise veriler rassal olarak dağılmış durumda olacaktır.</p>
 <p><br></p>
 <p><span class="math display">\[
 I = \frac{n}{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}}
 \frac{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}(x_i-\bar{x})(x_j-\bar{x})}{\sum_{i=1}^{n}(x_i - \bar{x})^2}
 \]</span> <br></p>
+<p>Örnek olarak Cumhuriyetçi parti adayının aldığı oy oranındaki mekansal otokorelasyon ilişkisini incelemek istediğmizi varsayalım. Değişkeni count bazında görselleştirdiğimizde</p>
 <pre class="r"><code>tm_shape(elections) +
   tm_polygons(&quot;pct_gop_16&quot;,
               style = &quot;pretty&quot;,
               palette = &quot;Reds&quot;) +
   tm_legend(legend.position = c(&quot;right&quot;, &quot;bottom&quot;))</code></pre>
-<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <p>Aşaşıdaki örnekte ABD başkanlık seçimlerinde Cumhuriyetçi adayın toplam oy yüzdesine yönelik Moran’s I değerini hesaplıyorum.</p>
 <pre class="r"><code>#Moran I Anlamlılık Değeri
-moran.test(elections$GOPvotes12, listw = wm, zero.policy = T)</code></pre>
+moran.test(elections$pct_gop_16, listw = wm, zero.policy = T)</code></pre>
 <pre><code>## 
 ##  Moran I test under randomisation
 ## 
-## data:  elections$GOPvotes12  
+## data:  elections$pct_gop_16  
 ## weights: wm  n reduced by no-neighbour observations
 ##   
 ## 
-## Moran I statistic standard deviate = 39.017, p-value &lt; 2.2e-16
+## Moran I statistic standard deviate = 55.782, p-value &lt; 2.2e-16
 ## alternative hypothesis: greater
 ## sample estimates:
 ## Moran I statistic       Expectation          Variance 
-##      0.4142324754     -0.0003221649      0.0001128910</code></pre>
-<p>Moran’s I değeri 0.4142 çıkmış görünüyor. Yani Cumhuriyetçi adayın aldığı belirli bir County’de aldığı oy oranının komşusu olduğu bölgelerdeki oy oranıyla 0.41 değerinde korele olduğu görülmektedir. Yukarıdaki çıktıda yer alan p-value değerine bakılarak sonucun anlamlılığı da sınanabilir.</p>
-<p>Moran’s I Endeksi, mekansal otokorelasyon hesaplamalarında en sık kullanılan yöntemdir. Ancak bunların yanında Geary’s C , Getis-Ord G gibi bir çeşitli global mekansal otokorelasyon test yöntemleri de bulunmaktadır. Tüm bu yöntemlere yönelik fonksiyonlar <code>spdep</code> kütüphanesi içerisind bulunmaktadır.</p>
+##      0.5996436116     -0.0003221649      0.0001156825</code></pre>
+<p>Moran’s <span class="math inline">\(I\)</span> değeri 0.59 çıkmış görünüyor. Yani Cumhuriyetçi adayın aldığı belirli bir County’de aldığı oy oranının komşusu olduğu bölgelerdeki oy oranıyla 0.59 değerinde korele olduğu görülmektedir. Yukarıdaki çıktıda yer alan p-value değerine bakılarak sonucun anlamlılığı da sınanabilir.</p>
+<p>Yukarıda hesapladığımız Moran’s <span class="math inline">\(I\)</span> istatistiğinin oluşturulmasına girdi oluşturan sağlayan gözlemlere ait değerler ile gözlemlerin mekansal gecikme değerleri arasında ilişkiyi gösteren saçılım grafiğini aşağıdaki şekilde oluşturabiliriz.</p>
+<pre class="r"><code>moran.plot(elections$pct_gop_16, listw = wm, zero.policy = T, labels = FALSE)</code></pre>
+<p><img src="R_Mekansal_files/figure-html/unnamed-chunk-27-1.png" width="672" /> ### Yerel Moran’s I</p>
+<p>Yukarıda açıklanmış olan Global Moran’s <span class="math inline">\(I\)</span> değeri özünde mekansal birime ait değer ve yereldeki onun komşuları arasındaki ilişkilerinden türetilmiştir. Bu bakımdan Global Moran’s I değerinin oluşturulmasında her bir mekansal birime ait Yerel (Local) Moran’s <span class="math inline">\(I\)</span> değerini aşağıdaki şekilde hesaplayabiliriz.</p>
+<p><span class="math display">\[
+I_i = \frac{(x_i-\bar{x})}{{∑_{k=1}^{n}(x_k-\bar{x})^2}/(n-1)}{∑_{j=1}^{n}w_{ij}(x_j-\bar{x})}
+\]</span> Peki Yerel Moran’s <span class="math inline">\(I\)</span> değerinin işlevi nedir? Global değerin yerel bileşenlerine parçaladığımız zaman değişken değerlerine ait belirli kümeler ve hotspotları görsel olarak tespit edebiliriz.</p>
+<pre class="r"><code>localmoran.vals &lt;- localmoran(elections$pct_gop_16, listw = wm, zero.policy = T)
+head(localmoran.vals)</code></pre>
+<pre><code>##                  Ii          E.Ii    Var.Ii       Z.Ii    Pr(z &gt; 0)
+## 00161528  0.5546501 -0.0003218539 0.1246218  1.5720780 5.796623e-02
+## 00161537  0.2460173 -0.0003218539 0.1424708  0.6526353 2.569957e-01
+## 00161543 -0.1122433 -0.0003218539 0.2495650 -0.2240379 5.886361e-01
+## 00161551 -0.3018533 -0.0003218539 0.1662695 -0.7394798 7.701922e-01
+## 00161558  1.8040820 -0.0003218539 0.1995877  4.0389348 2.684725e-05
+## 00161581  0.1481822 -0.0003218539 0.1662695  0.3641934 3.578568e-01</code></pre>
+</div>
+<div id="diğer-otokorelasyon-istatistikleri" class="section level3">
+<h3><span class="header-section-number">4.0.3</span> Diğer otokorelasyon istatistikleri</h3>
+<p>Moran’s I Endeksi, mekansal otokorelasyon hesaplamalarında en sık kullanılan yöntemdir. Ancak bunların yanında Geary’s C , Getis-Ord G gibi bir çeşitli global mekansal otokorelasyon test yöntemleri de bulunmaktadır. Tüm bu hesaplama met yönelik fonksiyonlar <code>spdep</code> kütüphanesi içerisinde bulunmaktadır. Benzer olarak Geary’s C istatistiği 0 ile 1 arasında değişmektedir. Fakat Moran’s <span class="math inline">\(I\)</span> istatistiği ile arasında ters bir ilişki bulunmaktadır. Yani değer 0’a yakınsadıkça mekansal otokorelasyon değeri artmaktadır.</p>
 <p>Geary’s <span class="math inline">\(C\)</span>:</p>
 <p><span class="math display">\[C = \frac{(n-1)}{2\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}}
 \frac{\sum_{i=1}^{n}\sum_{j=1}^{n}w_{ij}(x_i-x_j)^2}{\sum_{i=1}^{n}(x_i - \bar{x})^2}\]</span></p>
-<p>The value of Geary’s C lies between 0 and some unspecified value greater than 1. Values significantly lower than 1 demonstrate increasing positive spatial autocorrelation, whilst values significantly higher than 1 illustrate increasing negative spatial autocorrelation.</p>
-<p>Geary’s C is inversely related to Moran’s I, but it is not identical. Moran’s I is a measure of global spatial autocorrelation, while Geary’s C is more sensitive to local spatial autocorrelation.</p>
-<pre class="r"><code>geary.test(elections$GOPvotes12, listw = wm, zero.policy = T)</code></pre>
+<pre class="r"><code>geary.test(elections$pct_gop_16, listw = wm, zero.policy = T)</code></pre>
 <pre><code>## 
 ##  Geary C test under randomisation
 ## 
-## data:  elections$GOPvotes12 
+## data:  elections$pct_gop_16 
 ## weights: wm 
 ## 
-## Geary C statistic standard deviate = 15.943, p-value &lt; 2.2e-16
+## Geary C statistic standard deviate = 54.142, p-value &lt; 2.2e-16
 ## alternative hypothesis: Expectation greater than statistic
 ## sample estimates:
 ## Geary C statistic       Expectation          Variance 
-##      0.6149039042      1.0000000000      0.0005834672</code></pre>
+##      0.3822624622      1.0000000000      0.0001301806</code></pre>
 </div>
+</div>
+<div id="modelleme" class="section level1">
+<h1><span class="header-section-number">5</span> Modelleme</h1>
+<p>Yukarıda da gördüğümüz üzere mekansal verilerde gözlemler arasında bağımlılık ilişkisi genellikle rastlanan bir durum olup çeşitli yöntemlerle bu bağımlılık ilişkisi tespit edilebilmektedir. İdeal durumda modelleme sonucu elde ettiğimiz istatistiksel çıkarımlarımızda yansızlık olmaması için gözlemlerimizin birbirinden bağımsız olmasını isteriz ancak mekansal verilerde ancak bu mekansal verilerde genellikle az rastlanılan bir durumdur. Çünkü genellikle bir çok konude birbirine yakın coğrafi birimler arasında bir otokorelasyon ilişkisi bulunmaktadır.</p>
 </div>
 
 
